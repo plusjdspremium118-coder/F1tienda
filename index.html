@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paddock Store F1 — Merchandising Oficial</title>
+  <meta name="description" content="Paddock Store F1 — Merchandising oficial de Fórmula 1. Gorras, poleras, vasos, chaquetas y autos a escala de los 10 equipos.">
+  <meta name="keywords" content="Formula 1, F1, merchandising, Red Bull, Ferrari, Mercedes, McLaren, Aston Martin, Alpine, Williams, Racing Bulls, Sauber, Haas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <div class="logo" id="logo" role="banner" aria-label="Paddock Store F1">
+        <span class="logo-paddock">PADDOCK</span>
+        <span class="logo-store">STORE</span>
+        <svg class="logo-f1-svg" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="F1" role="img">
+          <path d="M0 0H42V8H10V12H38V20H10V32H0V0Z" fill="white"></path>
+          <path d="M48 0H58V32H48V0Z" fill="white"></path>
+          <path d="M63 0H108C113 0 118 5 118 10V22C118 27 113 32 108 32H73V24H106C108 24 110 22 110 20V12C110 10 108 8 106 8H73V0H63Z" fill="#e10600"></path>
+          <path d="M63 32V20L76 20V32H63Z" fill="white"></path>
+        </svg>
+      </div>
+      <nav class="header-nav" aria-label="Navegación principal">
+        <button class="btn-cart" id="cart-toggle" aria-label="Abrir carrito de compras" aria-expanded="false" style="display: none;">
+          <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-label">CARRITO</span>
+          <span class="cart-badge" id="cart-count" aria-live="polite">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Temporada 2026 — Colección Oficial</p>
+      <h1 class="hero-title" id="hero-title">Pasión a<br><em>Máxima Velocidad</em></h1>
+      <p class="hero-subtitle">Viste los colores de tu escudería favorita. Merchandising oficial de los 10 equipos de la parrilla.</p>
+      <button class="btn-hero" id="btn-enter-catalog">Ver Catálogo</button>
+    </div>
+    <div class="hero-deco" aria-hidden="true"></div>
+  </section>
+
+  <!-- ===== CATALOG ===== -->
+  <section class="catalog-section" id="catalog" aria-labelledby="catalog-title" style="display: none;">
+    <button class="btn-back" id="btn-back-home" aria-label="Volver al inicio">← Volver al inicio</button>
+    <div class="section-header">
+      <h2 class="section-title" id="catalog-title">Nuestro Catálogo</h2>
+      <p class="section-subtitle">50 productos · 10 escuderías · 5 categorías</p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-bar" role="group" aria-label="Filtros">
+      <div class="filter-group" id="filter-category" role="group" aria-label="Filtrar por categoría">
+        <button class="filter-btn active" data-filter-cat="all" id="fcat-all">Todos</button>
+        <button class="filter-btn" data-filter-cat="Gorra"      id="fcat-gorra">🧢 Gorras</button>
+        <button class="filter-btn" data-filter-cat="Polera"     id="fcat-polera">👕 Poleras</button>
+        <button class="filter-btn" data-filter-cat="Vaso"       id="fcat-vaso">🥤 Vasos</button>
+        <button class="filter-btn" data-filter-cat="Chaqueta"   id="fcat-chaqueta">🧥 Chaquetas</button>
+        <button class="filter-btn" data-filter-cat="Auto Escala" id="fcat-auto">🏎️ Autos Escala</button>
+      </div>
+      <div class="filter-group" id="filter-team" role="group" aria-label="Filtrar por equipo">
+        <button class="filter-btn active" data-filter-team="all"          id="fteam-all">Todos los equipos</button>
+        <button class="filter-btn" data-filter-team="Red Bull"            id="fteam-redbull">Red Bull</button>
+        <button class="filter-btn" data-filter-team="Ferrari"             id="fteam-ferrari">Ferrari</button>
+        <button class="filter-btn" data-filter-team="Mercedes"            id="fteam-mercedes">Mercedes</button>
+        <button class="filter-btn" data-filter-team="McLaren"             id="fteam-mclaren">McLaren</button>
+        <button class="filter-btn" data-filter-team="Aston Martin"        id="fteam-aston">Aston Martin</button>
+        <button class="filter-btn" data-filter-team="Alpine"              id="fteam-alpine">Alpine</button>
+        <button class="filter-btn" data-filter-team="Williams"            id="fteam-williams">Williams</button>
+        <button class="filter-btn" data-filter-team="Racing Bulls"        id="fteam-racingbulls">Racing Bulls</button>
+        <button class="filter-btn" data-filter-team="Sauber"              id="fteam-sauber">Sauber</button>
+        <button class="filter-btn" data-filter-team="Haas"                id="fteam-haas">Haas</button>
+      </div>
+    </div>
+
+    <p class="results-count" id="results-count" aria-live="polite"></p>
+    <div class="products-grid" id="products-grid" role="list" aria-label="Catálogo de productos"></div>
+  </section>
+
+  <!-- ===== CART SIDEBAR ===== -->
+  <aside class="cart-sidebar" id="cart-sidebar" role="dialog" aria-modal="true" aria-label="Carrito de compras" aria-hidden="true">
+    <div class="cart-header">
+      <h2 class="cart-title">Tu Carrito</h2>
+      <button class="btn-close-cart" id="close-cart" aria-label="Cerrar carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Área scrollable: items + resumen + formulario -->
+    <div class="cart-scroll-area">
+
+      <div class="cart-body">
+        <ul class="cart-list" id="cart-list" aria-label="Productos en el carrito" aria-live="polite"></ul>
+        <div class="cart-empty" id="cart-empty" role="status">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <p>Tu carrito está vacío</p>
+          <span>¡Añade tus productos favoritos!</span>
+        </div>
+      </div>
+
+      <!-- Resumen de precios visual mejorado -->
+      <div class="cart-summary" id="cart-summary" aria-label="Resumen de precios">
+        <p class="summary-heading">Resumen del pedido</p>
+        <div class="summary-lines">
+          <div class="summary-row">
+            <span class="row-label">Subtotal</span>
+            <span class="row-value" id="summary-subtotal">$0</span>
+          </div>
+          <div class="summary-row discount" id="discount-row" aria-live="polite">
+            <span class="row-label" id="discount-label">Descuento (0%)</span>
+            <span class="row-value green" id="summary-discount">-$0</span>
+          </div>
+          <div class="summary-row">
+            <span class="row-label">IVA (19%)</span>
+            <span class="row-value" id="summary-iva">$0</span>
+          </div>
+        </div>
+        <div class="summary-total-block">
+          <span class="total-label">TOTAL A PAGAR</span>
+          <span class="total-amount" id="summary-total">$0</span>
+        </div>
+      </div>
+
+      <!-- Formulario de cliente -->
+      <form class="checkout-form" id="checkout-form" novalidate aria-label="Formulario de compra">
+        <h3 class="form-title">Datos del Cliente</h3>
+        <div class="form-group">
+          <label for="input-name">Nombre completo</label>
+          <input type="text" id="input-name" name="name" placeholder="Ej: Carlos Sainz" autocomplete="name" maxlength="80" aria-required="true">
+          <span class="field-error" id="error-name" role="alert" aria-live="assertive"></span>
+        </div>
+        <div class="form-group">
+          <label for="input-email">Correo electrónico</label>
+          <input type="email" id="input-email" name="email" placeholder="carlos@ferrari.com" autocomplete="email" maxlength="120" aria-required="true">
+          <span class="field-error" id="error-email" role="alert" aria-live="assertive"></span>
+        </div>
+        <div class="form-group">
+          <label for="input-qty">Cantidad máxima por producto (1–10)</label>
+          <input type="number" id="input-qty" name="qty" placeholder="1" min="1" max="10" aria-required="true">
+          <span class="field-error" id="error-qty" role="alert" aria-live="assertive"></span>
+        </div>
+        <button type="submit" class="btn-checkout" id="btn-checkout">Confirmar Pedido ✓</button>
+        <div class="form-success" id="form-success" role="status" aria-live="polite" aria-atomic="true"></div>
+      </form>
+
+    </div><!-- /cart-scroll-area -->
+  </aside>
+
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
+  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- ===== SCROLL TO TOP ===== -->
+  <button id="scroll-top" class="btn-scroll-top" aria-label="Volver arriba">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <!-- ===== PRODUCT MODAL ===== -->
+  <div class="modal" id="product-modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="btn-close-modal" id="close-modal" aria-label="Cerrar detalles">✕</button>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <p>© 2025 Paddock Store F1 — Proyecto Educativo. No afiliado con la FIA ni la Fórmula 1.</p>
+  </footer>
+
+  <script src="js/security.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
