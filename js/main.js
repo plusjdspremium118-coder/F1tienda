@@ -45,7 +45,7 @@ function handleRemove(id) {
   if (item) showToast(item.name + ' eliminado', 'info');
 }
 
-/* ── Checkout ── */
+/* ── Checkout → Paso Pago ── */
 function handleCheckout(e) {
   e.preventDefault();
   clearFormErrors();
@@ -66,14 +66,160 @@ function handleCheckout(e) {
     return;
   }
 
-  var totals = calculateTotal(cart);
-  cart = clearCart();
-  saveCart(cart);
-  refreshCart();
-  setFormSuccess('¡Pedido confirmado! Total: ' + totals.total.toLocaleString('es-CL') + ' CLP');
-  showToast('¡Gracias por tu compra, campeón! 🏆', 'success', 5000);
-  e.target.reset();
-  setTimeout(function() { toggleCartSidebar(false); }, 2500);
+  /* Mostrar paso de pago */
+  var totals  = calculateTotal(cart);
+  var payStep = document.getElementById('payment-step');
+  if (payStep) {
+    payStep.style.display = 'flex';
+    selectedShipping = null;
+    selectedPayment  = null;
+    renderPaymentStep(totals, function(shipping, payment) {
+      var grandTotal = totals.total + shipping.price;
+
+      /* Capturamos los datos ANTES de limpiar el carrito */
+      var snapshot = {
+        items:    cart.slice(),
+        totals:   totals,
+        shipping: shipping,
+        payment:  payment,
+        grand:    grandTotal,
+        client:   { name: fields.name, email: fields.email }
+      };
+
+      /* Limpiar carrito y cerrar sidebar */
+      cart = clearCart();
+      saveCart(cart);
+      refreshCart();
+      payStep.style.display = 'none';
+      e.target.reset();
+      toggleCartSidebar(false);
+
+      /* Mostrar boleta */
+      showReceipt(snapshot);
+    });
+    payStep.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+/* ── Boleta de compra ── */
+function showReceipt(data) {
+  /* Número de pedido aleatorio con prefijo PS + año */
+  var orderNum = 'PS2026-' + Math.floor(10000 + Math.random() * 90000);
+
+  /* Fecha y hora */
+  var now  = new Date();
+  var pad  = function(n) { return n < 10 ? '0' + n : n; };
+  var dateStr = pad(now.getDate()) + '/' + pad(now.getMonth()+1) + '/' + now.getFullYear()
+              + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+
+  /* Llenar número y fecha */
+  var numEl  = document.getElementById('receipt-number');
+  var datEl  = document.getElementById('receipt-date');
+  if (numEl) numEl.textContent = 'N° ' + orderNum;
+  if (datEl) datEl.textContent = dateStr;
+
+  /* Datos del cliente */
+  var clientEl = document.getElementById('receipt-client');
+  if (clientEl) {
+    while (clientEl.firstChild) clientEl.removeChild(clientEl.firstChild);
+
+    /* Preferir sesión guardada si existe */
+    var session = typeof getSession === 'function' ? getSession() : null;
+    var clientName  = (session && session.name)  || data.client.name;
+    var clientEmail = (session && session.email) || data.client.email;
+
+    [['Cliente', clientName], ['Correo', clientEmail], ['Pedido', orderNum]].forEach(function(pair) {
+      var label = document.createElement('span'); label.className = 'receipt-client-label'; label.textContent = pair[0];
+      var value = document.createElement('span'); value.className = 'receipt-client-value'; value.textContent = pair[1];
+      clientEl.appendChild(label);
+      clientEl.appendChild(value);
+    });
+  }
+
+  /* Tabla de productos */
+  var tbody = document.getElementById('receipt-items');
+  if (tbody) {
+    while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+    data.items.forEach(function(item) {
+      var tr = document.createElement('tr');
+      var lineTotal = item.price * item.qty;
+
+      [item.name, item.team || '—', String(item.qty), formatCLP(item.price), formatCLP(lineTotal)].forEach(function(cell, i) {
+        var td = document.createElement('td');
+        td.textContent = cell;
+        if (i >= 2) td.className = 'text-right';
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* Totales */
+  var totalsEl = document.getElementById('receipt-totals');
+  if (totalsEl) {
+    while (totalsEl.firstChild) totalsEl.removeChild(totalsEl.firstChild);
+
+    var rows = [
+      ['Subtotal', formatCLP(data.totals.subtotal)],
+      ['Descuento', '-' + formatCLP(data.totals.discount)],
+      ['IVA (19%)', formatCLP(data.totals.iva)],
+      ['Envío', data.shipping.price === 0 ? 'Gratis' : formatCLP(data.shipping.price)]
+    ];
+    rows.forEach(function(r) {
+      var row = document.createElement('div'); row.className = 'receipt-total-row';
+      var lbl = document.createElement('span'); lbl.className = 'receipt-total-label'; lbl.textContent = r[0];
+      var val = document.createElement('span'); val.className = 'receipt-total-value'; val.textContent = r[1];
+      row.appendChild(lbl); row.appendChild(val);
+      totalsEl.appendChild(row);
+    });
+
+    /* Total final destacado */
+    var grandRow = document.createElement('div'); grandRow.className = 'receipt-grand-total';
+    var gLbl = document.createElement('span'); gLbl.textContent = 'TOTAL PAGADO';
+    var gVal = document.createElement('span'); gVal.textContent = formatCLP(data.grand);
+    grandRow.appendChild(gLbl); grandRow.appendChild(gVal);
+    totalsEl.appendChild(grandRow);
+  }
+
+  /* Logística */
+  var logEl = document.getElementById('receipt-logistics');
+  if (logEl) {
+    while (logEl.firstChild) logEl.removeChild(logEl.firstChild);
+
+    var title = document.createElement('p'); title.className = 'receipt-section-title'; title.textContent = 'ENVÍO Y PAGO';
+    logEl.appendChild(title);
+
+    var grid = document.createElement('div'); grid.className = 'receipt-client-grid';
+    [['Método de envío', data.shipping.label], ['Método de pago', data.payment.label]].forEach(function(pair) {
+      var lbl = document.createElement('span'); lbl.className = 'receipt-client-label'; lbl.textContent = pair[0];
+      var val = document.createElement('span'); val.className = 'receipt-client-value'; val.textContent = pair[1];
+      grid.appendChild(lbl); grid.appendChild(val);
+    });
+    logEl.appendChild(grid);
+  }
+
+  /* Abrir modal */
+  var modal = document.getElementById('receipt-modal');
+  if (modal) {
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+
+  /* Botones */
+  var printBtn = document.getElementById('btn-receipt-print');
+  var closeBtn = document.getElementById('btn-receipt-close');
+  if (printBtn) {
+    printBtn.onclick = function() { window.print(); };
+  }
+  if (closeBtn) {
+    closeBtn.onclick = function() {
+      modal.setAttribute('aria-hidden', 'true');
+      modal.classList.remove('visible');
+      document.body.style.overflow = '';
+      showToast('🏆 ¡Pedido ' + orderNum + ' confirmado!', 'success', 5000);
+    };
+  }
 }
 
 /* ── Filtros ── */
@@ -118,8 +264,22 @@ function registerListeners() {
     if (e.key === 'Escape') {
       toggleCartSidebar(false);
       if (typeof closeProductModal === 'function') closeProductModal();
+      if (typeof closeAuthModal === 'function') closeAuthModal();
     }
   });
+
+  /* Auth Modal */
+  var authBtn       = document.getElementById('btn-auth');
+  var closeAuthBtn  = document.getElementById('close-auth-modal');
+  var authModal     = document.getElementById('auth-modal');
+  if (authBtn)      authBtn.addEventListener('click', openAuthModal);
+  if (closeAuthBtn) closeAuthBtn.addEventListener('click', closeAuthModal);
+  if (authModal) {
+    authModal.addEventListener('click', function(e) {
+      if (e.target === authModal) closeAuthModal();
+    });
+  }
+  updateAuthButton();
 
   /* Lógica de Scroll (Glassmorphism Header y Scroll Top) */
   window.addEventListener('scroll', function() {
@@ -149,6 +309,10 @@ function registerListeners() {
       catalogSection.style.display = 'block';
       if (cartToggleBtn) cartToggleBtn.style.display = 'flex';
       window.scrollTo(0, 0);
+      /* Position the sidebar handle after the layout renders */
+      setTimeout(function() {
+        if (typeof positionHandle === 'function') positionHandle();
+      }, 80);
     });
   }
 
@@ -167,6 +331,45 @@ function registerListeners() {
 
   if (backBtn && catalogSection && heroSection) {
     backBtn.addEventListener('click', goHome);
+  }
+
+  /* Toggle Sidebar de Filtros */
+  var filterToggleBtn = document.getElementById('btn-filter-toggle');
+  var catalogBodyEl   = document.getElementById('catalog-body');
+  var filtersSidebarEl = document.getElementById('filters-sidebar');
+
+  function positionHandle() {
+    if (!filterToggleBtn || !filtersSidebarEl) return;
+    var sidebarRect = filtersSidebarEl.getBoundingClientRect();
+    var isHidden = catalogBodyEl && catalogBodyEl.classList.contains('sidebar-hidden');
+    /* When visible: handle sits at the right edge of the sidebar */
+    /* When hidden: sidebar collapses to 0px, handle sits at left:0 */
+    var leftPos = isHidden ? 0 : sidebarRect.right;
+    filterToggleBtn.style.left = Math.round(leftPos) + 'px';
+  }
+
+  /* Reposition on scroll and resize */
+  window.addEventListener('scroll', positionHandle, { passive: true });
+  window.addEventListener('resize', positionHandle, { passive: true });
+
+  if (filterToggleBtn && catalogBodyEl) {
+    filterToggleBtn.addEventListener('click', function() {
+      var isMobile = window.innerWidth <= 860;
+
+      if (isMobile) {
+        var isOpen = catalogBodyEl.classList.toggle('sidebar-open');
+        filterToggleBtn.setAttribute('aria-expanded', String(isOpen));
+        filterToggleBtn.title = isOpen ? 'Ocultar filtros' : 'Mostrar filtros';
+      } else {
+        var isHidden = catalogBodyEl.classList.toggle('sidebar-hidden');
+        filterToggleBtn.setAttribute('aria-expanded', String(!isHidden));
+        filterToggleBtn.title = isHidden ? 'Mostrar filtros' : 'Ocultar filtros';
+      }
+      /* Wait for transition then reposition */
+      setTimeout(positionHandle, 320);
+    });
+    /* Initial positioning after layout */
+    setTimeout(positionHandle, 50);
   }
 
   handleFilterGroup('filter-category', 'data-filter-cat',  function(v) { activeCategory = v; });

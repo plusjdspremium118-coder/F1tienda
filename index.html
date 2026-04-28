@@ -27,6 +27,7 @@
         </svg>
       </div>
       <nav class="header-nav" aria-label="Navegación principal">
+        <button class="btn-auth" id="btn-auth" aria-label="Cuenta de usuario">Ingresar / Crear cuenta</button>
         <button class="btn-cart" id="cart-toggle" aria-label="Abrir carrito de compras" aria-expanded="false" style="display: none;">
           <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <circle cx="9" cy="21" r="1"></circle>
@@ -53,39 +54,180 @@
 
   <!-- ===== CATALOG ===== -->
   <section class="catalog-section" id="catalog" aria-labelledby="catalog-title" style="display: none;">
-    <button class="btn-back" id="btn-back-home" aria-label="Volver al inicio">← Volver al inicio</button>
-    <div class="section-header">
-      <h2 class="section-title" id="catalog-title">Nuestro Catálogo</h2>
-      <p class="section-subtitle">50 productos · 10 escuderías · 5 categorías</p>
+
+    <!-- Top bar: back + title -->
+    <div class="catalog-topbar">
+      <button class="btn-back" id="btn-back-home" aria-label="Volver al inicio">← Inicio</button>
+      <div class="catalog-topbar-center">
+        <h2 class="section-title" id="catalog-title">Nuestro Catálogo</h2>
+        <p class="section-subtitle">50 productos · 10 escuderías · 5 categorías</p>
+      </div>
+      <!-- Spacer to keep title centered -->
+      <div style="width:72px;"></div>
     </div>
 
-    <!-- Filtros -->
-    <div class="filters-bar" role="group" aria-label="Filtros">
-      <div class="filter-group" id="filter-category" role="group" aria-label="Filtrar por categoría">
-        <button class="filter-btn active" data-filter-cat="all" id="fcat-all">Todos</button>
-        <button class="filter-btn" data-filter-cat="Gorra"      id="fcat-gorra">🧢 Gorras</button>
-        <button class="filter-btn" data-filter-cat="Polera"     id="fcat-polera">👕 Poleras</button>
-        <button class="filter-btn" data-filter-cat="Vaso"       id="fcat-vaso">🥤 Vasos</button>
-        <button class="filter-btn" data-filter-cat="Chaqueta"   id="fcat-chaqueta">🧥 Chaquetas</button>
-        <button class="filter-btn" data-filter-cat="Auto Escala" id="fcat-auto">🏎️ Autos Escala</button>
-      </div>
-      <div class="filter-group" id="filter-team" role="group" aria-label="Filtrar por equipo">
-        <button class="filter-btn active" data-filter-team="all"          id="fteam-all">Todos los equipos</button>
-        <button class="filter-btn" data-filter-team="Red Bull"            id="fteam-redbull">Red Bull</button>
-        <button class="filter-btn" data-filter-team="Ferrari"             id="fteam-ferrari">Ferrari</button>
-        <button class="filter-btn" data-filter-team="Mercedes"            id="fteam-mercedes">Mercedes</button>
-        <button class="filter-btn" data-filter-team="McLaren"             id="fteam-mclaren">McLaren</button>
-        <button class="filter-btn" data-filter-team="Aston Martin"        id="fteam-aston">Aston Martin</button>
-        <button class="filter-btn" data-filter-team="Alpine"              id="fteam-alpine">Alpine</button>
-        <button class="filter-btn" data-filter-team="Williams"            id="fteam-williams">Williams</button>
-        <button class="filter-btn" data-filter-team="Racing Bulls"        id="fteam-racingbulls">Racing Bulls</button>
-        <button class="filter-btn" data-filter-team="Sauber"              id="fteam-sauber">Sauber</button>
-        <button class="filter-btn" data-filter-team="Haas"                id="fteam-haas">Haas</button>
-      </div>
-    </div>
+    <!-- Catalog body: sidebar + grid -->
+    <div class="catalog-body" id="catalog-body">
 
-    <p class="results-count" id="results-count" aria-live="polite"></p>
-    <div class="products-grid" id="products-grid" role="list" aria-label="Catálogo de productos"></div>
+      <!-- LEFT SIDEBAR FILTERS -->
+      <aside class="filters-sidebar" id="filters-sidebar" aria-label="Panel de filtros">
+        <div class="filters-sidebar-inner">
+
+          <div class="filter-section">
+            <p class="filter-section-title">Categoría</p>
+            <div class="filter-group-v" id="filter-category" role="group" aria-label="Filtrar por categoría">
+              <button class="filter-btn active" data-filter-cat="all"        id="fcat-all">Todos</button>
+              <button class="filter-btn" data-filter-cat="Gorra"             id="fcat-gorra">🧢 Gorras</button>
+              <button class="filter-btn" data-filter-cat="Polera"            id="fcat-polera">👕 Poleras</button>
+              <button class="filter-btn" data-filter-cat="Vaso"              id="fcat-vaso">🥤 Vasos</button>
+              <button class="filter-btn" data-filter-cat="Chaqueta"          id="fcat-chaqueta">🧥 Chaquetas</button>
+              <button class="filter-btn" data-filter-cat="Auto Escala"       id="fcat-auto">🏎️ Autos Escala</button>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <p class="filter-section-title">Escudería</p>
+            <div class="filter-group-v" id="filter-team" role="group" aria-label="Filtrar por equipo">
+
+              <button class="filter-btn team-btn active" data-filter-team="all" id="fteam-all">
+                <span class="team-logo-wrap" style="background:#333;">
+                  <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7" stroke="#fff" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke="#fff" stroke-width="1.5"/></svg>
+                </span>
+                Todos los equipos
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="Red Bull" id="fteam-redbull">
+                <span class="team-logo-wrap" style="background:#1B3A6B;">
+                  <!-- Red Bull simplified: circle + bull horns -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="13" r="5.5" fill="#CC1B00"/>
+                    <circle cx="6.5" cy="13" r="5.5" fill="#1B3A6B" stroke="#CC1B00" stroke-width=".5"/>
+                    <path d="M10 8.5 Q12 5 14 8.5" stroke="#FFD700" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                Red Bull
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="Ferrari" id="fteam-ferrari">
+                <span class="team-logo-wrap" style="background:#CC0000;">
+                  <!-- Ferrari: shield shape with SF -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3 L20 7 L20 15 Q20 20 12 22 Q4 20 4 15 L4 7 Z" fill="#CC0000" stroke="#FFD700" stroke-width="1"/>
+                    <text x="12" y="15" text-anchor="middle" fill="#FFD700" font-size="7" font-weight="bold" font-family="sans-serif">SF</text>
+                  </svg>
+                </span>
+                Ferrari
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="Mercedes" id="fteam-mercedes">
+                <span class="team-logo-wrap" style="background:#1B1B1B;">
+                  <!-- Mercedes: three-pointed star -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="8.5" stroke="#00B4A0" stroke-width="1.5"/>
+                    <path d="M12 3.5 L12 12 M12 12 L19.5 17.5 M12 12 L4.5 17.5" stroke="#00B4A0" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                Mercedes
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="McLaren" id="fteam-mclaren">
+                <span class="team-logo-wrap" style="background:#1A1A1A;">
+                  <!-- McLaren: stylised M -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M4 17 L4 7 L12 14 L20 7 L20 17" stroke="#FF8000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  </svg>
+                </span>
+                McLaren
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="Aston Martin" id="fteam-aston">
+                <span class="team-logo-wrap" style="background:#00352F;">
+                  <!-- Aston Martin: wings shape -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12 C8 8 3 9 3 12 C3 15 8 16 12 12 Z" fill="#00B050"/>
+                    <path d="M12 12 C16 8 21 9 21 12 C21 15 16 16 12 12 Z" fill="#00B050"/>
+                    <circle cx="12" cy="12" r="2" fill="#fff"/>
+                  </svg>
+                </span>
+                Aston Martin
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="Alpine" id="fteam-alpine">
+                <span class="team-logo-wrap" style="background:#0B1173;">
+                  <!-- Alpine: A triangle -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 4 L21 19 H3 Z" fill="none" stroke="#0090FF" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M8 19 L12 11 L16 19" fill="none" stroke="#FF0A6C" stroke-width="1.5" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                Alpine
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="Williams" id="fteam-williams">
+                <span class="team-logo-wrap" style="background:#00338D;">
+                  <!-- Williams: W shape -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M4 7 L8 17 L12 10 L16 17 L20 7" stroke="#00A3E0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  </svg>
+                </span>
+                Williams
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="Racing Bulls" id="fteam-racingbulls">
+                <span class="team-logo-wrap" style="background:#1B1B2E;">
+                  <!-- Racing Bulls: double circle + lightning -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="9" cy="13" r="5" fill="#1765CF" opacity=".9"/>
+                    <circle cx="15" cy="13" r="5" fill="#CC1B00" opacity=".9"/>
+                    <path d="M12 7 L10 12 L13 12 L11 18" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                Racing Bulls
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="Sauber" id="fteam-sauber">
+                <span class="team-logo-wrap" style="background:#0D1F0D;">
+                  <!-- Sauber Kick: K shape -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M8 5 L8 19 M8 12 L16 5 M8 12 L16 19" stroke="#00E701" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                Sauber
+              </button>
+
+              <button class="filter-btn team-btn" data-filter-team="Haas" id="fteam-haas">
+                <span class="team-logo-wrap" style="background:#1A1A1A;">
+                  <!-- Haas: H shape -->
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 5 L7 19 M17 5 L17 19 M7 12 L17 12" stroke="#E8002D" stroke-width="2.2" stroke-linecap="round"/>
+                    <rect x="5" y="3" width="14" height="18" rx="2" stroke="#666" stroke-width=".8" fill="none"/>
+                  </svg>
+                </span>
+                Haas
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- SIDEBAR HANDLE: fixed tab always visible at the sidebar edge -->
+      <button class="sidebar-handle" id="btn-filter-toggle"
+              aria-label="Mostrar/Ocultar filtros" aria-expanded="true" title="Ocultar filtros">
+        <svg class="handle-icon" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+
+      <!-- MAIN CONTENT -->
+      <div class="catalog-main">
+        <p class="results-count" id="results-count" aria-live="polite"></p>
+        <div class="products-grid" id="products-grid" role="list" aria-label="Catálogo de productos"></div>
+      </div>
+
+    </div><!-- /catalog-body -->
   </section>
 
   <!-- ===== CART SIDEBAR ===== -->
@@ -156,9 +298,12 @@
           <input type="number" id="input-qty" name="qty" placeholder="1" min="1" max="10" aria-required="true">
           <span class="field-error" id="error-qty" role="alert" aria-live="assertive"></span>
         </div>
-        <button type="submit" class="btn-checkout" id="btn-checkout">Confirmar Pedido ✓</button>
+        <button type="submit" class="btn-checkout" id="btn-checkout">Continuar con el Pago →</button>
         <div class="form-success" id="form-success" role="status" aria-live="polite" aria-atomic="true"></div>
       </form>
+
+      <!-- ===== PASO DE PAGO ===== -->
+      <div id="payment-step" style="display:none; padding: 1.25rem; display:none; flex-direction:column; gap:.75rem; border-top: 1px solid var(--clr-border);"></div>
 
     </div><!-- /cart-scroll-area -->
   </aside>
@@ -179,14 +324,244 @@
     </div>
   </div>
 
+  <!-- ===== AUTH MODAL ===== -->
+  <div class="modal" id="auth-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="modal-content auth-modal-content">
+      <button class="btn-close-modal" id="close-auth-modal" aria-label="Cerrar">✕</button>
+      <div id="auth-modal-body" class="auth-modal-body"></div>
+    </div>
+  </div>
+
   <footer class="site-footer" role="contentinfo">
-    <p>© 2025 Paddock Store F1 — Proyecto Educativo. No afiliado con la FIA ni la Fórmula 1.</p>
+    <div class="footer-inner">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <div class="footer-logo" id="footer-logo-link" style="cursor:pointer;" title="Volver al inicio">
+          <span class="logo-paddock">PADDOCK</span><span class="logo-store">STORE</span>
+          <svg class="logo-f1-svg" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M0 0H42V8H10V12H38V20H10V32H0V0Z" fill="white"></path>
+            <path d="M48 0H58V32H48V0Z" fill="white"></path>
+            <path d="M63 0H108C113 0 118 5 118 10V22C118 27 113 32 108 32H73V24H106C108 24 110 22 110 20V12C110 10 108 8 106 8H73V0H63Z" fill="#e10600"></path>
+            <path d="M63 32V20L76 20V32H63Z" fill="white"></path>
+          </svg>
+        </div>
+        <p class="footer-tagline">El merchandising oficial de la parrilla más veloz del mundo. Temporada 2026.</p>
+        <div class="footer-socials">
+          <a href="https://www.instagram.com/f1/" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Instagram de F1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://x.com/F1" target="_blank" rel="noopener" class="footer-social-btn" aria-label="X / Twitter de F1">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@F1" target="_blank" rel="noopener" class="footer-social-btn" aria-label="YouTube de F1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42A2.78 2.78 0 0 0 20.6 4.46C18.88 4 12 4 12 4s-6.88 0-8.6.46A2.78 2.78 0 0 0 1.46 6.42 29.94 29.94 0 0 0 1 12a29.94 29.94 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29.94 29.94 0 0 0 23 12a29.94 29.94 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Links: Tienda -->
+      <div class="footer-col">
+        <h3 class="footer-col-title">Tienda</h3>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link" data-cat="Gorra">Gorras</a></li>
+          <li><a href="#" class="footer-link" data-cat="Polera">Poleras</a></li>
+          <li><a href="#" class="footer-link" data-cat="Chaqueta">Chaquetas</a></li>
+          <li><a href="#" class="footer-link" data-cat="Vaso">Vasos y Termos</a></li>
+          <li><a href="#" class="footer-link" data-cat="Auto Escala">Autos a Escala</a></li>
+          <li><a href="#" class="footer-link" data-cat="all">Novedades / Todo</a></li>
+        </ul>
+      </div>
+
+      <!-- Links: Equipos -->
+      <div class="footer-col">
+        <h3 class="footer-col-title">Equipos</h3>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link" data-team="Red Bull">Red Bull Racing</a></li>
+          <li><a href="#" class="footer-link" data-team="Ferrari">Scuderia Ferrari</a></li>
+          <li><a href="#" class="footer-link" data-team="Mercedes">Mercedes AMG</a></li>
+          <li><a href="#" class="footer-link" data-team="McLaren">McLaren F1</a></li>
+          <li><a href="#" class="footer-link" data-team="Aston Martin">Aston Martin</a></li>
+          <li><a href="#" class="footer-link" data-team="all">Ver todos los equipos →</a></li>
+        </ul>
+      </div>
+
+      <!-- Links: Ayuda -->
+      <div class="footer-col">
+        <h3 class="footer-col-title">Ayuda</h3>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link" data-info="faq">Preguntas Frecuentes</a></li>
+          <li><a href="#" class="footer-link" data-info="envios">Envíos y Devoluciones</a></li>
+          <li><a href="#" class="footer-link" data-info="tallas">Guía de Tallas</a></li>
+          <li><a href="#" class="footer-link" data-info="pagos">Métodos de Pago</a></li>
+          <li><a href="#" class="footer-link" data-info="contacto">Contacto</a></li>
+          <li><a href="#" class="footer-link" data-info="privacidad">Política de Privacidad</a></li>
+        </ul>
+      </div>
+
+    </div><!-- /footer-inner -->
+
+    <!-- Métodos de pago -->
+    <div class="footer-payment-bar">
+      <p class="footer-pay-label">Medios de pago aceptados</p>
+      <div class="footer-pay-cards">
+
+        <!-- Visa -->
+        <div class="pay-card">
+          <svg viewBox="0 0 48 32" fill="none" class="pay-card-svg" aria-label="Visa">
+            <rect width="48" height="32" rx="5" fill="#1A1F71"/>
+            <text x="8" y="22" font-family="Arial,sans-serif" font-size="13" font-weight="900" font-style="italic" fill="#FFFFFF" letter-spacing="-0.5">VISA</text>
+            <rect x="32" y="12" width="10" height="8" rx="1" fill="#F7B600" opacity=".9"/>
+          </svg>
+          <span class="pay-card-name">Visa</span>
+        </div>
+
+        <!-- Mastercard -->
+        <div class="pay-card">
+          <svg viewBox="0 0 48 32" fill="none" class="pay-card-svg" aria-label="Mastercard">
+            <rect width="48" height="32" rx="5" fill="#252525"/>
+            <circle cx="18" cy="16" r="8" fill="#EB001B"/>
+            <circle cx="30" cy="16" r="8" fill="#F79E1B"/>
+            <path d="M24 10.1a8 8 0 0 1 0 11.8A8 8 0 0 1 24 10.1Z" fill="#FF5F00"/>
+          </svg>
+          <span class="pay-card-name">Mastercard</span>
+        </div>
+
+        <!-- WebPay -->
+        <div class="pay-card">
+          <svg viewBox="0 0 48 32" fill="none" class="pay-card-svg" aria-label="WebPay">
+            <rect width="48" height="32" rx="5" fill="#003087"/>
+            <rect x="0" y="0" width="48" height="10" rx="5" fill="#D52B1E"/>
+            <rect x="0" y="5" width="48" height="5" fill="#D52B1E"/>
+            <text x="24" y="22" font-family="Arial,sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">WEBPAY</text>
+          </svg>
+          <span class="pay-card-name">WebPay</span>
+        </div>
+
+        <!-- Transferencia -->
+        <div class="pay-card">
+          <svg viewBox="0 0 48 32" fill="none" class="pay-card-svg" aria-label="Transferencia Bancaria">
+            <rect width="48" height="32" rx="5" fill="#1C1C1C" stroke="#2A2A2A" stroke-width="1"/>
+            <!-- Bank icon -->
+            <path d="M24 6 L36 13 H12 Z" fill="#FF2800" opacity=".9"/>
+            <rect x="15" y="13" width="3" height="9" fill="#888" rx="1"/>
+            <rect x="22" y="13" width="3" height="9" fill="#888" rx="1"/>
+            <rect x="29" y="13" width="3" height="9" fill="#888" rx="1"/>
+            <rect x="13" y="22" width="21" height="2.5" fill="#FF2800" rx="1" opacity=".8"/>
+          </svg>
+          <span class="pay-card-name">Transferencia</span>
+        </div>
+
+        <!-- Débito -->
+        <div class="pay-card">
+          <svg viewBox="0 0 48 32" fill="none" class="pay-card-svg" aria-label="Tarjeta Débito">
+            <rect width="48" height="32" rx="5" fill="#141414" stroke="#2A2A2A" stroke-width="1"/>
+            <rect x="0" y="0" width="48" height="10" rx="5" fill="#FF2800"/>
+            <rect x="0" y="5" width="48" height="5" fill="#CC2000"/>
+            <rect x="8" y="14" width="14" height="10" rx="2" fill="#FFD700" opacity=".9"/>
+            <text x="30" y="23" font-family="Arial,sans-serif" font-size="6.5" font-weight="700" fill="#888" text-anchor="middle">DÉBITO</text>
+          </svg>
+          <span class="pay-card-name">Débito</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Barra inferior -->
+    <div class="footer-bottom">
+      <p>© 2026 Paddock Store F1 — Proyecto Educativo · Ingeniería Informática. No afiliado con la FIA ni la Fórmula 1.™</p>
+      <div class="footer-bottom-links">
+        <a href="#" class="footer-bottom-link" data-info="terminos">Términos de uso</a>
+        <a href="#" class="footer-bottom-link" data-info="privacidad">Privacidad</a>
+        <a href="#" class="footer-bottom-link" data-info="cookies">Cookies</a>
+      </div>
+    </div>
+
   </footer>
+
+  <!-- ===== INFO MODAL (footer) ===== -->
+  <div class="modal" id="info-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+    <div class="modal-content info-modal-content">
+      <button class="btn-close-modal" id="close-info-modal" aria-label="Cerrar">✕</button>
+      <div id="info-modal-body" class="info-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== RECEIPT MODAL (boleta de compra) ===== -->
+  <div class="modal" id="receipt-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="receipt-title">
+    <div class="modal-content receipt-modal-content">
+      <div class="receipt-sheet" id="receipt-sheet">
+
+        <!-- Cabecera de la boleta -->
+        <div class="receipt-header">
+          <div class="receipt-logo">
+            <span class="receipt-logo-paddock">PADDOCK</span><span class="receipt-logo-store">STORE</span>
+            <svg class="logo-f1-svg" viewBox="0 0 120 32" fill="none" aria-hidden="true">
+              <path d="M0 0H42V8H10V12H38V20H10V32H0V0Z" fill="white"/>
+              <path d="M48 0H58V32H48V0Z" fill="white"/>
+              <path d="M63 0H108C113 0 118 5 118 10V22C118 27 113 32 108 32H73V24H106C108 24 110 22 110 20V12C110 10 108 8 106 8H73V0H63Z" fill="#e10600"/>
+              <path d="M63 32V20L76 20V32H63Z" fill="white"/>
+            </svg>
+          </div>
+          <div class="receipt-meta">
+            <p class="receipt-doc-type">BOLETA ELECTRÓNICA</p>
+            <p class="receipt-number" id="receipt-number">N° 000000</p>
+            <p class="receipt-date" id="receipt-date"></p>
+          </div>
+        </div>
+
+        <!-- Datos del cliente -->
+        <div class="receipt-section">
+          <p class="receipt-section-title">DATOS DEL CLIENTE</p>
+          <div class="receipt-client-grid" id="receipt-client"></div>
+        </div>
+
+        <!-- Tabla de productos -->
+        <div class="receipt-section">
+          <p class="receipt-section-title">DETALLE DE COMPRA</p>
+          <table class="receipt-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Equipo</th>
+                <th class="text-right">Cant.</th>
+                <th class="text-right">P. Unit.</th>
+                <th class="text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody id="receipt-items"></tbody>
+          </table>
+        </div>
+
+        <!-- Totales -->
+        <div class="receipt-totals" id="receipt-totals"></div>
+
+        <!-- Envío y pago -->
+        <div class="receipt-section receipt-logistics" id="receipt-logistics"></div>
+
+        <!-- Pie de boleta -->
+        <div class="receipt-footer">
+          <p>🏎️ ¡Gracias por tu compra en Paddock Store F1!</p>
+          <p class="receipt-legal">Este documento es una simulación educativa. No tiene validez tributaria.</p>
+          <p class="receipt-legal">paddockstore.cl · soporte@paddockstore.cl</p>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="receipt-actions">
+        <button class="btn-receipt-print" id="btn-receipt-print">🖨️ Imprimir Boleta</button>
+        <button class="btn-receipt-close" id="btn-receipt-close">✓ Listo</button>
+      </div>
+    </div>
+  </div>
 
   <script src="js/security.js"></script>
   <script src="js/inventory.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/payment.js"></script>
+  <script src="js/footer.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
