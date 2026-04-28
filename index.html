@@ -62,15 +62,16 @@
         <h2 class="section-title" id="catalog-title">Nuestro Catálogo</h2>
         <p class="section-subtitle">50 productos · 10 escuderías · 5 categorías</p>
       </div>
-      <!-- Spacer to keep title centered -->
-      <div style="width:72px;"></div>
+      <!-- Spacer: balances the back button to keep title visually centered -->
+      <div class="topbar-spacer" aria-hidden="true"></div>
     </div>
 
     <!-- Catalog body: sidebar + grid -->
     <div class="catalog-body" id="catalog-body">
 
-      <!-- LEFT SIDEBAR FILTERS -->
-      <aside class="filters-sidebar" id="filters-sidebar" aria-label="Panel de filtros">
+      <!-- SIDEBAR FILTERS WRAPPER -->
+      <div class="sidebar-container" id="sidebar-container">
+        <aside class="filters-sidebar" id="filters-sidebar" aria-label="Panel de filtros">
         <div class="filters-sidebar-inner">
 
           <div class="filter-section">
@@ -212,7 +213,7 @@
         </div>
       </aside>
 
-      <!-- SIDEBAR HANDLE: fixed tab always visible at the sidebar edge -->
+      <!-- SIDEBAR HANDLE: attached to the sidebar edge -->
       <button class="sidebar-handle" id="btn-filter-toggle"
               aria-label="Mostrar/Ocultar filtros" aria-expanded="true" title="Ocultar filtros">
         <svg class="handle-icon" viewBox="0 0 24 24" fill="none"
@@ -220,6 +221,7 @@
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
+    </div>
 
       <!-- MAIN CONTENT -->
       <div class="catalog-main">

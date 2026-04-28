@@ -226,6 +226,7 @@ body::before {
   min-height: var(--topbar-h);
 }
 .catalog-topbar-center { text-align: center; flex: 1; min-width: 0; overflow: hidden; }
+.topbar-spacer { width: 72px; flex-shrink: 0; } /* mirrors btn-back width for centering */
 
 /* ── Toggle button ── */
 .btn-filter-toggle {
@@ -248,21 +249,30 @@ body::before {
   align-items: start;
   min-height: calc(100vh - var(--header-h) - var(--topbar-h));
   transition: grid-template-columns .3s cubic-bezier(.4,0,.2,1);
-  position: relative; /* needed for absolute sidebar on mobile */
+  position: relative;
 }
 .catalog-body.sidebar-hidden {
   grid-template-columns: 0px 1fr;
 }
 
+/* ── Sidebar Container (Sticky in Desktop, Fixed in Mobile) ── */
+.sidebar-container {
+  position: sticky;
+  top: calc(var(--header-h) + var(--topbar-h));
+  height: calc(100vh - var(--header-h) - var(--topbar-h));
+  z-index: 120;
+  display: flex;
+  overflow: visible; /* allows handle to be seen outside */
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+
 /* ── Left filter sidebar ── */
 .filters-sidebar {
+  flex: 1;
   border-right: 1px solid var(--clr-border);
   background: var(--clr-surface);
-  transition: opacity .25s ease;
-  position: sticky; top: calc(var(--header-h) + var(--topbar-h));
-  max-height: calc(100vh - var(--header-h) - var(--topbar-h));
-  overflow-y: auto;
-  overflow-x: visible;
+  height: 100%;
+  overflow-y: auto; overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: var(--clr-red) var(--clr-surface2);
 }
@@ -270,45 +280,47 @@ body::before {
 .filters-sidebar::-webkit-scrollbar-track { background: var(--clr-surface2); }
 .filters-sidebar::-webkit-scrollbar-thumb { background: var(--clr-red); border-radius: 3px; }
 
-/* ── Sidebar handle (fixed tab at edge of sidebar) ── */
+/* ── Sidebar handle (attached to container edge) ── */
 .sidebar-handle {
-  position: fixed;
-  /* left is set by JS based on sidebar width */
+  position: absolute;
+  left: 100%;
   top: 50vh;
   transform: translateY(-50%);
-  z-index: 50;
+  z-index: 121;
   width: 22px; height: 56px;
-  /* Rojo permanente con glow */
   background: var(--clr-red);
   border: 1px solid #ff4422;
   border-left: none;
   border-radius: 0 var(--r-sm) var(--r-sm) 0;
-  display: flex; align-items: center; justify-content: center;
+  display: none; /* hidden by default, shown by JS when catalog visible */
+  align-items: center; justify-content: center;
   cursor: pointer;
   box-shadow: 4px 0 18px rgba(255,40,0,.55), 0 0 8px rgba(255,40,0,.3);
-  transition: background var(--t), box-shadow var(--t), transform var(--t);
+  transition: background var(--t), box-shadow var(--t);
   padding: 0;
 }
 .sidebar-handle:hover {
   background: #cc2000;
   box-shadow: 6px 0 28px rgba(255,40,0,.8), 0 0 16px rgba(255,40,0,.5);
-  transform: translateY(-50%) scaleX(1.15);
 }
-.sidebar-handle:active { transform: translateY(-50%) scaleX(.95); }
+.sidebar-handle:active { opacity: .8; }
 .handle-icon {
   width: 13px; height: 13px; color: #fff;
   transition: transform .3s cubic-bezier(.4,0,.2,1);
   flex-shrink: 0;
 }
+/* Desktop: arrow flips when sidebar hidden */
 .catalog-body.sidebar-hidden .handle-icon { transform: rotate(180deg); }
-.catalog-body.sidebar-hidden .filters-sidebar {
-  opacity: 0; pointer-events: none; border-right: none;
-}
+.catalog-body.sidebar-hidden .filters-sidebar { opacity: 0; pointer-events: none; border-right: none; }
+/* Mobile: arrow flips when sidebar open */
+.catalog-body.sidebar-open .handle-icon { transform: rotate(180deg); }
+
 .filters-sidebar-inner {
   padding: 1.25rem .9rem;
   display: flex; flex-direction: column; gap: 1.25rem;
-  width: 220px; /* matches grid column so inner doesn't collapse */
+  width: 220px;
 }
+
 
 /* ── Filter sections ── */
 .filter-section { display: flex; flex-direction: column; gap: .35rem; }
@@ -832,36 +844,42 @@ body::before {
 
 /* ── Modal producto: desktop layout ── */
 @media (min-width: 640px) {
-  .modal-body { flex-direction: row; }
-  .modal-banner { height: auto; width: 45%; flex-shrink: 0; }
+  .modal-body { flex-direction: row; min-height: 400px; }
+  .modal-banner { width: 50%; min-height: 100%; }
 }
 
 /* ── Tablet / sidebar (≤ 860px) ── */
 @media (max-width: 860px) {
-  /* Sidebar: sale del flujo → slide desde la izquierda */
-  .catalog-body {
-    grid-template-columns: 1fr !important; /* producto ocupa todo el ancho */
-  }
-  .filters-sidebar {
-    position: fixed; /* fixed para no interferir con el grid */
+  .catalog-body { grid-template-columns: 1fr !important; }
+  
+  .sidebar-container {
+    position: fixed;
     top: calc(var(--header-h) + var(--topbar-h));
     left: 0;
+    width: 260px;
     height: calc(100vh - var(--header-h) - var(--topbar-h));
-    width: 260px; z-index: 80;
+    z-index: 150;
     transform: translateX(-100%);
-    opacity: 1; pointer-events: none;
-    border-right: 1px solid var(--clr-border);
     box-shadow: 4px 0 24px rgba(0,0,0,.7);
     transition: transform .3s cubic-bezier(.4,0,.2,1);
-    overflow-y: auto;
   }
-  .catalog-body.sidebar-open .filters-sidebar {
+  
+  .catalog-body.sidebar-open .sidebar-container {
     transform: translateX(0);
+  }
+  
+  .filters-sidebar {
+    position: static;
+    transform: none;
+    width: 100%;
+    box-shadow: none;
+    opacity: 1;
     pointer-events: auto;
   }
+  
   .filters-sidebar-inner { width: 260px; }
   .catalog-main { padding: 1rem .75rem 3rem; }
-  .sidebar-handle { width: 28px; height: 44px; }
+  .sidebar-handle { width: 28px; height: 44px; top: 120px; } /* moved handle up on mobile */
 }
 
 /* ── Cart full-screen en móvil pequeño ── */
@@ -889,7 +907,7 @@ body::before {
 
   /* Topbar: sin spacer, compacto */
   .catalog-topbar { padding: .5rem .75rem; }
-  .catalog-topbar > div[style] { display: none !important; }
+  .topbar-spacer { display: none; }
   .section-title { font-size: 1.3rem; }
   .section-subtitle { font-size: .7rem; }
 
@@ -985,8 +1003,9 @@ body::before {
   border-radius: var(--r-lg); width: 100%; max-width: 720px;
   position: relative; transform: translateY(20px);
   transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-  overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.6);
+  overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,.6);
   display: flex; flex-direction: column;
+  max-height: 90vh; /* Permite scroll si el contenido es muy alto */
 }
 .modal.visible .modal-content { transform: translateY(0); }
 
@@ -1002,12 +1021,15 @@ body::before {
 
 .modal-body { display: flex; flex-direction: column; flex: 1; }
 .modal-banner {
-  height: 220px; position: relative;
-  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  min-height: 280px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; background-color: var(--clr-bg);
 }
 .modal-img {
-  width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; z-index: 1;
+  width: 100%; height: 100%; object-fit: contain;
+  z-index: 1; transition: transform .5s ease;
 }
+.modal-img:hover { transform: scale(1.05); }
 .modal-emoji {
   font-size: 5rem; position: relative; z-index: 2;
   filter: drop-shadow(0 4px 12px rgba(0,0,0,.6));
