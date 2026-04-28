@@ -334,28 +334,37 @@ function registerListeners() {
   }
 
   /* Toggle Sidebar de Filtros */
-  var filterToggleBtn = document.getElementById('btn-filter-toggle');
-  var catalogBodyEl   = document.getElementById('catalog-body');
+  var filterToggleBtn  = document.getElementById('btn-filter-toggle');
+  var catalogBodyEl    = document.getElementById('catalog-body');
   var filtersSidebarEl = document.getElementById('filters-sidebar');
 
   function positionHandle() {
-    if (!filterToggleBtn || !filtersSidebarEl) return;
-    var sidebarRect = filtersSidebarEl.getBoundingClientRect();
-    var isHidden = catalogBodyEl && catalogBodyEl.classList.contains('sidebar-hidden');
-    /* When visible: handle sits at the right edge of the sidebar */
-    /* When hidden: sidebar collapses to 0px, handle sits at left:0 */
-    var leftPos = isHidden ? 0 : sidebarRect.right;
-    filterToggleBtn.style.left = Math.round(leftPos) + 'px';
+    if (!filterToggleBtn) return;
+    var isMobile = window.innerWidth <= 860;
+    if (isMobile) {
+      /* En móvil: el handle se pega al borde derecho de la pantalla izquierda */
+      var isOpen = catalogBodyEl && catalogBodyEl.classList.contains('sidebar-open');
+      filterToggleBtn.style.left = isOpen ? '240px' : '0px';
+    } else {
+      if (!filtersSidebarEl) return;
+      var isHidden = catalogBodyEl && catalogBodyEl.classList.contains('sidebar-hidden');
+      var leftPos = isHidden ? 0 : filtersSidebarEl.getBoundingClientRect().right;
+      filterToggleBtn.style.left = Math.round(leftPos) + 'px';
+    }
   }
 
-  /* Reposition on scroll and resize */
   window.addEventListener('scroll', positionHandle, { passive: true });
-  window.addEventListener('resize', positionHandle, { passive: true });
+  window.addEventListener('resize', function() {
+    positionHandle();
+    /* Si se cambia a desktop mientras el sidebar móvil está abierto, limpiarlo */
+    if (window.innerWidth > 860 && catalogBodyEl) {
+      catalogBodyEl.classList.remove('sidebar-open');
+    }
+  }, { passive: true });
 
   if (filterToggleBtn && catalogBodyEl) {
     filterToggleBtn.addEventListener('click', function() {
       var isMobile = window.innerWidth <= 860;
-
       if (isMobile) {
         var isOpen = catalogBodyEl.classList.toggle('sidebar-open');
         filterToggleBtn.setAttribute('aria-expanded', String(isOpen));
@@ -365,11 +374,25 @@ function registerListeners() {
         filterToggleBtn.setAttribute('aria-expanded', String(!isHidden));
         filterToggleBtn.title = isHidden ? 'Mostrar filtros' : 'Ocultar filtros';
       }
-      /* Wait for transition then reposition */
       setTimeout(positionHandle, 320);
     });
-    /* Initial positioning after layout */
-    setTimeout(positionHandle, 50);
+
+    /* Cerrar sidebar móvil al hacer clic fuera de él */
+    if (catalogBodyEl) {
+      document.addEventListener('click', function(e) {
+        if (window.innerWidth > 860) return;
+        if (!catalogBodyEl.classList.contains('sidebar-open')) return;
+        var sidebar = document.getElementById('filters-sidebar');
+        if (sidebar && !sidebar.contains(e.target) && e.target !== filterToggleBtn) {
+          catalogBodyEl.classList.remove('sidebar-open');
+          filterToggleBtn.setAttribute('aria-expanded', 'false');
+          filterToggleBtn.title = 'Mostrar filtros';
+          setTimeout(positionHandle, 320);
+        }
+      });
+    }
+
+    setTimeout(positionHandle, 100);
   }
 
   handleFilterGroup('filter-category', 'data-filter-cat',  function(v) { activeCategory = v; });
